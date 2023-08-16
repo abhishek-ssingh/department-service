@@ -2,6 +2,7 @@ package com.acro.departmentservice.service.impl;
 
 import com.acro.departmentservice.dto.DepartmentDto;
 import com.acro.departmentservice.entity.Department;
+import com.acro.departmentservice.exception.ResourceNotFoundException;
 import com.acro.departmentservice.repository.DepartmentRepository;
 import com.acro.departmentservice.service.DepartmentService;
 import org.modelmapper.ModelMapper;
@@ -31,16 +32,15 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department savedDepartment = departmentRepository.save(department);
 
-        DepartmentDto savedDepartmentDto = modelMapper.map(savedDepartment, DepartmentDto.class);
-
-        return savedDepartmentDto;
+        return modelMapper.map(savedDepartment, DepartmentDto.class);
     }
 
     @Override
     public DepartmentDto getDepartmentByCode(String departmentCode) {
-        Department getDepartment = departmentRepository.findByDepartmentCode(departmentCode);
-
-        DepartmentDto getDepartmentDto = modelMapper.map(getDepartment, DepartmentDto.class);
-        return getDepartmentDto;
+        Department getDepartment = departmentRepository.findByDepartmentCode(departmentCode).
+                orElseThrow(
+                () -> new ResourceNotFoundException("Department", "Code", departmentCode)
+        );
+        return  modelMapper.map(getDepartment, DepartmentDto.class);
     }
 }
