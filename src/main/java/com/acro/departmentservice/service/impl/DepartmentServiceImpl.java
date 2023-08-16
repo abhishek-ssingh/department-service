@@ -4,17 +4,20 @@ import com.acro.departmentservice.dto.DepartmentDto;
 import com.acro.departmentservice.entity.Department;
 import com.acro.departmentservice.repository.DepartmentRepository;
 import com.acro.departmentservice.service.DepartmentService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
 
+    //instead of using autowired we can use constructor of department
+    //repo
     @Autowired
     private DepartmentRepository departmentRepository;
 
-    //instead of using autowired we can use constructor of department
-    //repo
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Override
     public DepartmentDto saveDepartment(DepartmentDto departmentDto) {
@@ -28,13 +31,16 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department savedDepartment = departmentRepository.save(department);
 
-        DepartmentDto savedDepartmentDto = new DepartmentDto(
-                savedDepartment.getId(),
-                savedDepartment.getDepartmentName(),
-                savedDepartment.getDepartmentDescription(),
-                savedDepartment.getDepartmentCode()
-        );
+        DepartmentDto savedDepartmentDto = modelMapper.map(savedDepartment, DepartmentDto.class);
 
         return savedDepartmentDto;
+    }
+
+    @Override
+    public DepartmentDto getDepartmentByCode(String departmentCode) {
+        Department getDepartment = departmentRepository.findByDepartmentCode(departmentCode);
+
+        DepartmentDto getDepartmentDto = modelMapper.map(getDepartment, DepartmentDto.class);
+        return getDepartmentDto;
     }
 }

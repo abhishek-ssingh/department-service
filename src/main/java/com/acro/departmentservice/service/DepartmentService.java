@@ -6,4 +6,6 @@ import com.acro.departmentservice.entity.Department;
 public interface DepartmentService {
 
     DepartmentDto saveDepartment(DepartmentDto departmentDto);
+
+    DepartmentDto getDepartmentByCode (String departmentCode);
 }
